@@ -227,6 +227,8 @@
     html[data-design-active="fluent"] .mobile-bottom-nav { background-color: var(--sys-surface); }
     html[data-design-active="apple"] .mobile-bottom-nav { background-color: var(--sys-surface); border-top-color: transparent; box-shadow: 0 -1px 0 var(--sys-outline-variant); }
     .mobile-bottom-nav .nav-dest { position: relative; opacity: 1; }
+    .mobile-bottom-nav { gap: clamp(0.25rem, 2.5vw, 1.5rem); }
+    .mobile-bottom-nav .mobile-wide-transport { display: none; }
     .mobile-bottom-nav .nav-dest[aria-current="page"] .nav-indicator { background-color: var(--sys-secondary-container); color: var(--sys-on-secondary-container); }
     .mobile-bottom-nav .nav-dest[aria-current="page"] > span:last-child { color: var(--sys-on-surface); }
     html[data-design-active="material"] .mobile-bottom-nav .nav-dest[aria-current="page"] .nav-indicator { background-color: var(--sys-secondary-container) !important; color: var(--sys-on-secondary-container) !important; }
@@ -279,6 +281,10 @@
     }
     @media (min-width: 768px) {
       main.max-w-6xl { max-width: min(100%, 96rem); }
+    }
+    @media (min-width: 640px) and (max-width: 767px) {
+      .mobile-bottom-nav .mobile-transport-chooser { display: none; }
+      .mobile-bottom-nav .mobile-wide-transport { display: flex; }
     }
     @media (min-width: 1280px) {
       .app-card.p-6 { padding: clamp(1.5rem, 1.8vw, 2rem); }
@@ -937,18 +943,30 @@
   <!-- ==========================================================================
        MOBILE BOTTOM NAVIGATION BAR
        ========================================================================== -->
-  <nav id="mobile-bottom-nav" aria-label="Mobile Navigation" class="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 pb-safe h-bottom-nav-safe bg-sys-surface-container border-t border-sys-outline-variant/30 px-2 flex items-center justify-center gap-2">
+  <nav id="mobile-bottom-nav" aria-label="Mobile Navigation" class="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 pb-safe h-bottom-nav-safe bg-sys-surface-container border-t border-sys-outline-variant/30 px-2 flex items-center justify-center">
     <button data-tab="overview" onclick="switchTab('overview')" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">explore</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_pulse">Pulse</span>
     </button>
-    <button type="button" onclick="openTransportChooser()" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
+    <button type="button" onclick="openTransportChooser()" class="mobile-transport-chooser nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">commute</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_transport">Transport</span>
+    </button>
+    <button type="button" onclick="switchTab('transit')" class="mobile-wide-transport nav-dest flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
+      <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
+        <span class="material-symbols-rounded text-[24px]">directions_bus</span>
+      </div>
+      <span class="text-xs font-medium" data-i18n="nav_transit">Bus</span>
+    </button>
+    <button type="button" onclick="switchTab('rail')" class="mobile-wide-transport nav-dest flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
+      <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
+        <span class="material-symbols-rounded text-[24px]">train</span>
+      </div>
+      <span class="text-xs font-medium" data-i18n="nav_rail">Rail</span>
     </button>
     <button data-tab="civic" onclick="switchTab('civic')" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
