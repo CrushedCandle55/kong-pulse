@@ -148,18 +148,32 @@
     html.dark[data-seed="fluent-teal"] .text-sys-on-primary, html[data-seed="fluent-teal"] .text-sys-on-primary { color: #000000 !important; }
 
     .app-card { border-radius: var(--card-radius); border: none; background-color: var(--sys-surface-container-low); box-shadow: none; }
+    html[data-design-active="fluent"] .app-card { border: 1px solid var(--sys-outline-variant); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+    html[data-design-active="apple"] .app-card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+    html.dark[data-design-active="fluent"] .app-card,
+    html.dark[data-design-active="apple"] .app-card { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28); }
     html:not(.dark) #view-settings button.border, html:not(.dark) #view-settings .border { --tw-border-opacity: 1; }
     html:not(.dark) #view-settings button[class*="border-sys-outline"] { border-color: rgba(0, 0, 0, 0.22) !important; }
     html:not(.dark) #view-settings button.border-sys-primary { border-color: var(--sys-primary) !important; }
     .app-btn { border-radius: var(--btn-radius); }
     button[class*="bg-"]:not([class*="bg-transparent"]) { --tw-bg-opacity: 1 !important; opacity: 1 !important; }
     button:disabled, button[aria-disabled="true"] { opacity: 1 !important; filter: none !important; }
-    .shadow-sm, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+    html[data-design-active="material"] .shadow-sm,
+    html[data-design-active="material"] .shadow-xl,
+    html[data-design-active="material"] .shadow-2xl { box-shadow: none !important; }
 
-    html { overflow-x: clip; overscroll-behavior-y: contain; }
-    body { min-height: 100dvh; overflow-x: clip; background-color: var(--sys-surface); color: var(--sys-on-surface); transition: background-color 200ms ease, color 200ms ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    html { overflow-x: clip; overscroll-behavior-y: contain; scroll-padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)); }
+    body { min-height: 100dvh; overflow-x: clip; background-color: var(--sys-surface); color: var(--sys-on-surface); transition: background-color 200ms ease, color 200ms ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; text-rendering: optimizeLegibility; }
     input, select, textarea { font-size: 16px !important; }
     button, [role="button"], select { touch-action: manipulation; }
+    button, [role="button"], select, input, textarea { font: inherit; }
+    button:focus:not(:focus-visible), [role="button"]:focus:not(:focus-visible), select:focus:not(:focus-visible), input:focus:not(:focus-visible), textarea:focus:not(:focus-visible) { outline: none; }
+    button:focus-visible, [role="button"]:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--sys-primary);
+      outline-offset: 2px;
+    }
+    button, [role="button"] { -webkit-user-select: none; user-select: none; }
+    button:disabled, button[aria-disabled="true"] { cursor: not-allowed; }
 
     .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -183,6 +197,7 @@
     html[data-design-active="apple"] .m3-ripple::before { display: none; }
     html[data-design-active="fluent"] .m3-ripple:not([class*="bg-"]):hover { background-color: var(--sys-surface-container-high); }
     html[data-design-active="apple"] .m3-ripple:active { transform: scale(0.98); }
+    html[data-design-active="fluent"] .m3-ripple:active { transform: translateY(1px); }
 
     .m3-linear-progress { height: 4px; width: 100%; background-color: var(--sys-surface-container-highest); overflow: hidden; position: relative; }
     .m3-linear-progress-bar { position: absolute; top: 0; bottom: 0; left: 0; width: 45%; background-color: var(--sys-primary); border-radius: 9999px; animation: m3-indeterminate 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
@@ -216,7 +231,7 @@
     .mtr-line-badge { background: var(--mtr-line-color) !important; color: var(--mtr-line-on-color, #FFFFFF) !important; }
     .mtr-station-item[aria-pressed="true"] { background: color-mix(in srgb, var(--mtr-line-color) 18%, var(--sys-surface-container-high)); border-color: var(--mtr-line-color); }
     .mtr-eta-stop[aria-pressed="true"] { background: color-mix(in srgb, var(--mtr-line-color) 20%, var(--sys-surface-container-high)); border-color: var(--mtr-line-color); }
-    .transit-eta-panel { background: var(--sys-surface-container-low); border: 1px solid var(--sys-outline-variant); border-radius: 1.75rem 1.75rem 0 0; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35); }
+    .transit-eta-panel { background: var(--sys-surface-container-low); border: 1px solid var(--sys-outline-variant); border-radius: 1.75rem 1.75rem 0 0; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35); overscroll-behavior: contain; }
     .transit-eta-handle { width: 3.25rem; height: 0.3rem; border-radius: 9999px; background: var(--sys-outline-variant); }
     .transit-eta-arrival { background: var(--sys-surface-container-high); border: 1px solid transparent; border-radius: 1rem; }
     .transit-eta-arrival:first-child { border-color: color-mix(in srgb, #22c55e 45%, transparent); background: color-mix(in srgb, #22c55e 12%, var(--sys-surface-container-high)); }
@@ -288,6 +303,14 @@
     }
     @media (min-width: 1280px) {
       .app-card.p-6 { padding: clamp(1.5rem, 1.8vw, 2rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
