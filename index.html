@@ -227,6 +227,8 @@
     html[data-design-active="fluent"] .mobile-bottom-nav { background-color: var(--sys-surface); }
     html[data-design-active="apple"] .mobile-bottom-nav { background-color: var(--sys-surface); border-top-color: transparent; box-shadow: 0 -1px 0 var(--sys-outline-variant); }
     .mobile-bottom-nav .nav-dest { position: relative; opacity: 1; }
+    .mobile-bottom-nav { gap: clamp(0.25rem, 2.5vw, 1.5rem); }
+    .mobile-bottom-nav .mobile-wide-transport { display: none; }
     .mobile-bottom-nav .nav-dest[aria-current="page"] .nav-indicator { background-color: var(--sys-secondary-container); color: var(--sys-on-secondary-container); }
     .mobile-bottom-nav .nav-dest[aria-current="page"] > span:last-child { color: var(--sys-on-surface); }
     html[data-design-active="material"] .mobile-bottom-nav .nav-dest[aria-current="page"] .nav-indicator { background-color: var(--sys-secondary-container) !important; color: var(--sys-on-secondary-container) !important; }
@@ -279,6 +281,10 @@
     }
     @media (min-width: 768px) {
       main.max-w-6xl { max-width: min(100%, 96rem); }
+    }
+    @media (min-width: 640px) and (max-width: 767px) {
+      .mobile-bottom-nav .mobile-transport-chooser { display: none; }
+      .mobile-bottom-nav .mobile-wide-transport { display: flex; }
     }
     @media (min-width: 1280px) {
       .app-card.p-6 { padding: clamp(1.5rem, 1.8vw, 2rem); }
@@ -420,10 +426,10 @@
       <!-- ==================== VIEW 1: PULSE OVERVIEW ==================== -->
       <section id="view-overview" class="app-view space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <article data-home-card="weather" class="lg:col-span-6 app-card bg-sys-primary-container text-sys-on-primary-container p-6 flex flex-col justify-between shadow-sm">
+          <article data-home-card="weather" onclick="if (window.matchMedia('(max-width: 767px)').matches && !event.target.closest('button')) switchTab('weather')" class="lg:col-span-6 app-card bg-sys-primary-container text-sys-on-primary-container p-6 flex flex-col justify-between shadow-sm">
             <div class="flex items-start justify-between gap-4">
               <div class="min-w-0">
-                <button type="button" onclick="openDistrictPickerSheet()" aria-label="Choose Hong Kong District" class="min-h-[44px] px-3.5 app-btn bg-sys-primary-container text-sys-on-primary-container inline-flex items-center gap-2 mb-3 m3-ripple">
+                <button type="button" onclick="event.stopPropagation(); openDistrictPickerSheet()" aria-label="Choose Hong Kong District" class="min-h-[44px] px-3.5 app-btn bg-sys-primary-container text-sys-on-primary-container inline-flex items-center gap-2 mb-3 m3-ripple">
                   <span class="material-symbols-rounded filled text-[18px] shrink-0">location_on</span>
                   <span id="ov-district-label" class="text-sm font-semibold truncate max-w-[200px]">Hong Kong Observatory</span>
                   <span class="material-symbols-rounded text-[18px] shrink-0">expand_more</span>
@@ -441,7 +447,7 @@
             <div class="mt-6 pt-4 border-t border-sys-on-primary-container/15">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium opacity-85" data-i18n="ov_4day">4-Day Outlook</span>
-                <button onclick="switchTab('weather')" class="min-h-[38px] text-xs font-semibold inline-flex items-center gap-0.5 app-btn px-2.5 m3-ripple">
+                <button onclick="event.stopPropagation(); switchTab('weather')" class="min-h-[38px] text-xs font-semibold inline-flex items-center gap-0.5 app-btn px-2.5 m3-ripple">
                   <span data-i18n="btn_9day">9-Day Forecast</span>
                   <span class="material-symbols-rounded text-[16px]">chevron_right</span>
                 </button>
@@ -937,44 +943,65 @@
   <!-- ==========================================================================
        MOBILE BOTTOM NAVIGATION BAR
        ========================================================================== -->
-  <nav id="mobile-bottom-nav" aria-label="Mobile Navigation" class="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 pb-safe h-bottom-nav-safe bg-sys-surface-container border-t border-sys-outline-variant/30 px-2 flex items-center justify-around">
-    <button data-tab="overview" onclick="switchTab('overview')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+  <nav id="mobile-bottom-nav" aria-label="Mobile Navigation" class="mobile-bottom-nav md:hidden fixed bottom-0 inset-x-0 z-30 pb-safe h-bottom-nav-safe bg-sys-surface-container border-t border-sys-outline-variant/30 px-2 flex items-center justify-center">
+    <button data-tab="overview" onclick="switchTab('overview')" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">explore</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_pulse">Pulse</span>
     </button>
-    <button data-tab="weather" onclick="switchTab('weather')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+    <button type="button" onclick="openTransportChooser()" class="mobile-transport-chooser nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
-        <span class="material-symbols-rounded text-[24px]">partly_cloudy_day</span>
+        <span class="material-symbols-rounded text-[24px]">commute</span>
       </div>
-      <span class="text-xs font-medium" data-i18n="nav_weather">Weather</span>
+      <span class="text-xs font-medium" data-i18n="nav_transport">Transport</span>
     </button>
-    <button data-tab="transit" onclick="switchTab('transit')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+    <button type="button" onclick="switchTab('transit')" class="mobile-wide-transport nav-dest flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">directions_bus</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_transit">Bus</span>
     </button>
-    <button data-tab="rail" onclick="switchTab('rail')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+    <button type="button" onclick="switchTab('rail')" class="mobile-wide-transport nav-dest flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">train</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_rail">Rail</span>
     </button>
-    <button data-tab="civic" onclick="switchTab('civic')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+    <button data-tab="civic" onclick="switchTab('civic')" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">local_hospital</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_civic">Civic</span>
     </button>
-    <button data-tab="settings" onclick="switchTab('settings')" class="nav-dest flex flex-col items-center justify-center gap-1 flex-1 min-h-[56px] focus:outline-none">
+    <button data-tab="settings" onclick="switchTab('settings')" class="nav-dest flex flex-col items-center justify-center gap-1 w-[clamp(64px,18vw,88px)] shrink-0 min-h-[56px] focus:outline-none">
       <div class="nav-indicator w-[64px] h-[32px] rounded-full flex items-center justify-center transition-colors m3-ripple">
         <span class="material-symbols-rounded text-[24px]">settings</span>
       </div>
       <span class="text-xs font-medium" data-i18n="nav_settings">Settings</span>
     </button>
   </nav>
+
+  <div id="mobile-transport-sheet" role="dialog" aria-modal="true" aria-labelledby="mobile-transport-title" onclick="if(event.target===this) closeBottomSheet('mobile-transport-sheet')" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-end justify-center p-4">
+    <div class="w-full max-w-sm app-card pb-safe overflow-hidden">
+      <div class="px-5 py-4 flex items-center justify-between gap-3 border-b border-sys-outline-variant/30">
+        <h3 id="mobile-transport-title" class="text-base font-semibold">Choose transport</h3>
+        <button type="button" onclick="closeBottomSheet('mobile-transport-sheet')" aria-label="Close" class="w-10 h-10 app-btn flex items-center justify-center text-sys-on-surface-variant m3-ripple">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 p-4">
+        <button type="button" onclick="selectMobileTransport('transit')" class="min-h-[92px] app-btn bg-sys-surface-container text-sys-on-surface flex flex-col items-center justify-center gap-2 font-semibold m3-ripple">
+          <span class="material-symbols-rounded text-[30px] text-sys-primary">directions_bus</span>
+          <span>Bus</span>
+        </button>
+        <button type="button" onclick="selectMobileTransport('rail')" class="min-h-[92px] app-btn bg-sys-surface-container text-sys-on-surface flex flex-col items-center justify-center gap-2 font-semibold m3-ripple">
+          <span class="material-symbols-rounded text-[30px] text-sys-primary">train</span>
+          <span>Rail</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        MODALS
@@ -1342,7 +1369,7 @@
 
     const I18N = {
       en: {
-        nav_pulse: 'Pulse', nav_weather: 'Weather', nav_transit: 'Bus', nav_rail: 'Rail', nav_civic: 'Civic', nav_settings: 'Settings',
+        nav_pulse: 'Pulse', nav_weather: 'Weather', nav_transit: 'Bus', nav_rail: 'Rail', nav_transport: 'Transport', nav_civic: 'Civic', nav_settings: 'Settings',
         search_placeholder_short: 'Search bus, MTR, or district...',
         ov_4day: '4-Day Outlook', btn_9day: '9-Day Forecast', ov_pinned_title: 'Pinned Bus Arrivals', btn_all_routes: 'All Routes',
         ov_pin_hint: 'Star any stop in Transit to pin here', btn_refresh_eta: 'Refresh ETAs', ov_ae_title: 'A&E Fastest Wait', btn_18_hosp: '18 Hospitals',
@@ -1361,7 +1388,7 @@
         set_remove_data: 'Remove all my data', set_remove_data_hint: 'Clears local preferences and treats you as a new visitor'
       },
       tc: {
-        nav_pulse: '港脈', nav_weather: '天氣', nav_transit: '巴士', nav_rail: '鐵路', nav_civic: '民生', nav_settings: '設定',
+        nav_pulse: '港脈', nav_weather: '天氣', nav_transit: '巴士', nav_rail: '鐵路', nav_transport: '交通', nav_civic: '民生', nav_settings: '設定',
         search_placeholder_short: '搜尋巴士、港鐵或地區...',
         ov_4day: '未來四天天氣', btn_9day: '九天預報', ov_pinned_title: '已釘選巴士到站', btn_all_routes: '全部路線',
         ov_pin_hint: '於「巴士」分頁按星號釘選常用車站', btn_refresh_eta: '更新到站', ov_ae_title: '急症室最短輪候', btn_18_hosp: '全部18間醫院',
@@ -1380,7 +1407,7 @@
         set_remove_data: '清除我的所有資料', set_remove_data_hint: '會清除本機偏好設定，並視你為首次訪客'
       },
       yue: {
-        nav_pulse: '港脈', nav_weather: '天氣', nav_transit: '巴士', nav_rail: '鐵路', nav_civic: '民生', nav_settings: '設定',
+        nav_pulse: '港脈', nav_weather: '天氣', nav_transit: '巴士', nav_rail: '鐵路', nav_transport: '交通', nav_civic: '民生', nav_settings: '設定',
         search_placeholder_short: '搵巴士、港鐵或者地區...',
         ov_4day: '未來四天天氣', btn_9day: '九日預報', ov_pinned_title: '已釘選巴士到站', btn_all_routes: '全部路線',
         ov_pin_hint: '去「巴士」頁撳星星就可以釘選常用站', btn_refresh_eta: '更新到站', ov_ae_title: '急症室最短輪候', btn_18_hosp: '全部18間醫院',
@@ -1399,7 +1426,7 @@
         set_remove_data: '清除我嘅所有資料', set_remove_data_hint: '會清走本機設定，當你係第一次嚟用'
       },
       sc: {
-        nav_pulse: '港脉', nav_weather: '天气', nav_transit: '巴士', nav_rail: '铁路', nav_civic: '民生', nav_settings: '设置',
+        nav_pulse: '港脉', nav_weather: '天气', nav_transit: '巴士', nav_rail: '铁路', nav_transport: '交通', nav_civic: '民生', nav_settings: '设置',
         search_placeholder_short: '搜索巴士、港铁或地区...',
         ov_4day: '未来四天天气', btn_9day: '九天预报', ov_pinned_title: '已钉选巴士到站', btn_all_routes: '全部路线',
         ov_pin_hint: '于「巴士」分页按星号钉选常用车站', btn_refresh_eta: '更新到站', ov_ae_title: '急诊室最短轮候', btn_18_hosp: '全部18间医院',
@@ -1580,6 +1607,11 @@
     function closeBottomSheet(backdropId) { const bd = document.getElementById(backdropId); if (!bd) return; bd.classList.add('hidden'); bd.classList.remove('flex'); document.body.style.overflow = ''; }
 
     function openGlobalSearchSheet() { openBottomSheet('search-sheet-backdrop'); setTimeout(() => document.getElementById('sheet-search-input')?.focus(), 120); }
+    function openTransportChooser() { openBottomSheet('mobile-transport-sheet'); }
+    function selectMobileTransport(tabId) {
+      closeBottomSheet('mobile-transport-sheet');
+      switchTab(tabId);
+    }
 
     function rememberSearch(value) {
       const query = String(value || '').trim().toUpperCase();
